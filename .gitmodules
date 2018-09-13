@@ -1,0 +1,3 @@
+[submodule "lib/pysvd3"]
+	path = lib/pysvd3
+	url = https://github.com/derleeG/pysvd3.git
