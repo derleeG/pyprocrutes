@@ -3,7 +3,7 @@ from timeit import default_timer as timer
 import procrutes
 
 N = 10000
-
+iter_num = 30
 def opf(a):
     u, s, v = np.linalg.svd(a)
     r = np.matmul(u*np.array([1, 1, np.sign(np.linalg.det(np.matmul(u, v)))]), v)
@@ -11,7 +11,7 @@ def opf(a):
 
 def gen_rigid_rotation(n):
     R = np.random.randn(n, 3, 3).astype(np.float32)
-    X = np.random.randn(n, 3, 10).astype(np.float32)*10
+    X = np.random.randn(n, 3, 10).astype(np.float32)
     Y = np.zeros((n, 3, 10), dtype=np.float32)
 
     for r, x, y in zip(R, X, Y):
@@ -60,14 +60,16 @@ def get_func(method):
         func = procrutes.procrutes
         data_func = gen_rigid_rotation
         stat_func = lambda x, y, o: (x, y, o, \
-                np.linalg.norm(np.matmul(o, x) - y))
+                np.linalg.norm(np.matmul(o, x) - y)/\
+                np.linalg.norm(x))
         print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nerror: {}'
 
     elif method == 'anitropic_procrutes':
         func = procrutes.anitropic_procrutes
         data_func = gen_streched_rotation
         stat_func = lambda x, y, o: (x, y, *o, \
-                np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x))
+                np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x)/\
+                np.linalg.norm(x))
         print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nmatrix S:\n{}\nerror: {}'
 
 
@@ -88,7 +90,7 @@ def benchmark_accuracy(data_func, func, stat_func):
     datas = data_func(N)
     err_sum = 0
     for data in zip(*datas):
-        err_sum += stat_func(*data, func(*data))[-1]
+        err_sum += stat_func(*data, func(*data, iter_num=iter_num))[-1]
 
     print('Average error over {} random samples: {}'.format(N, err_sum/N))
 
@@ -101,7 +103,7 @@ def benchmark_speed(data_func, func):
 
     start = timer()
     for data in zip(*datas):
-        _ = func(*data)
+        _ = func(*data, iter_num=iter_num)
     end = timer()
 
     print('Average execution time over {} random samples: {} us'.format(N, (end-start)/N*1e6))
@@ -134,7 +136,7 @@ if  __name__ == '__main__':
 
     #test_method_correctness('opf')
     #test_method_correctness('svd')
-    test_method_correctness('anitropic_procrutes')
+    #test_method_correctness('anitropic_procrutes')
     benchmark_method_accuracy('anitropic_procrutes')
     benchmark_method_speed('anitropic_procrutes')
     #benchmark_method_accuracy('opf')

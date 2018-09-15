@@ -108,7 +108,8 @@ def procrutes(np.ndarray[float, ndim=2] X not None,
 
 def anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
                         np.ndarray[float, ndim=2] Y not None,
-                        np.ndarray[float, ndim=1] S=None):
+                        np.ndarray[float, ndim=1] S=None,
+                        int iter_num=20):
 
     # solve argmin_R,S ||RSX - Y||_F, subject to RTR = I, det(R) = 1 and S is
     # diagonal and positive
@@ -125,7 +126,7 @@ def anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
 
     Xs = np.square(X).sum(-1)
 
-    for _ in range(100):
+    for _ in range(iter_num):
         scale_vec(A[0, 0], A[1, 0], A[2, 0], u11, u21, u31, SV[0])
         scale_vec(A[0, 1], A[1, 1], A[2, 1], u12, u22, u32, SV[1])
         scale_vec(A[0, 2], A[1, 2], A[2, 2], u13, u23, u33, SV[2])
