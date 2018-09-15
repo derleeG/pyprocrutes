@@ -109,7 +109,7 @@ def procrutes(np.ndarray[float, ndim=2] X not None,
 def anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
                         np.ndarray[float, ndim=2] Y not None,
                         np.ndarray[float, ndim=1] S=None,
-                        int iter_num=20):
+                        int iter_num=30):
 
     # solve argmin_R,S ||RSX - Y||_F, subject to RTR = I, det(R) = 1 and S is
     # diagonal and positive

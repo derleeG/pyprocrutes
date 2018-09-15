@@ -90,7 +90,7 @@ def benchmark_accuracy(data_func, func, stat_func):
     datas = data_func(N)
     err_sum = 0
     for data in zip(*datas):
-        err_sum += stat_func(*data, func(*data, iter_num=iter_num))[-1]
+        err_sum += stat_func(*data, func(*data))[-1]
 
     print('Average error over {} random samples: {}'.format(N, err_sum/N))
 
@@ -103,7 +103,7 @@ def benchmark_speed(data_func, func):
 
     start = timer()
     for data in zip(*datas):
-        _ = func(*data, iter_num=iter_num)
+        _ = func(*data)
     end = timer()
 
     print('Average execution time over {} random samples: {} us'.format(N, (end-start)/N*1e6))
@@ -137,6 +137,8 @@ if  __name__ == '__main__':
     #test_method_correctness('opf')
     #test_method_correctness('svd')
     #test_method_correctness('anitropic_procrutes')
+    benchmark_method_accuracy('procrutes')
+    benchmark_method_speed('procrutes')
     benchmark_method_accuracy('anitropic_procrutes')
     benchmark_method_speed('anitropic_procrutes')
     #benchmark_method_accuracy('opf')
