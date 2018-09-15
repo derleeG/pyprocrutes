@@ -106,6 +106,7 @@ def procrutes(np.ndarray[float, ndim=2] X not None,
 
     return R
 
+
 def anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
                         np.ndarray[float, ndim=2] Y not None,
                         np.ndarray[float, ndim=1] S=None,
@@ -153,3 +154,48 @@ def anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
 
     return R, S
 
+
+def np_orthogonal_polar_factor(np.ndarray[float, ndim=2, mode='c'] A not None):
+    if A.shape[0] != 3 or A.shape[1] != 3:
+        raise ValueError("Expecting inputs of the size 3x3")
+
+    U, S, V = np.linalg.svd(A)
+    R = np.matmul(U*np.array([1, 1, np.sign(np.linalg.det(np.matmul(U, V)))]), V)
+
+    return R
+
+
+def np_procrutes(np.ndarray[float, ndim=2] X not None,
+                 np.ndarray[float, ndim=2] Y not None):
+
+    A = np.matmul(Y, X.T)
+    if A.shape[0] != 3 or A.shape[1] != 3:
+        raise ValueError("Expecting inputs of the size 3xN")
+
+    R = np_orthogonal_polar_factor(A)
+
+    return R
+
+
+def np_anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
+                        np.ndarray[float, ndim=2] Y not None,
+                        np.ndarray[float, ndim=1] S=None,
+                        int iter_num=30):
+
+    # solve argmin_R,S ||RSX - Y||_F, subject to RTR = I, det(R) = 1 and S is
+    # diagonal and positive
+    A = np.matmul(Y, X.T)
+    if A.shape[0] != 3 or A.shape[1] != 3:
+        raise ValueError("Expecting inputs of the size 3xN")
+
+    if S is None:
+        S = np.ones((3,), dtype=np.float32)
+
+    Xs = np.square(X).sum(-1)
+    non_planar = Xs != 0
+
+    for _ in range(iter_num):
+        R = np_orthogonal_polar_factor(A*S)
+        S[non_planar] = np.abs((A*R).sum(0)[non_planar] / Xs[non_planar])
+
+    return R, S

@@ -4,10 +4,8 @@ import procrutes
 
 N = 10000
 iter_num = 30
-def opf(a):
-    u, s, v = np.linalg.svd(a)
-    r = np.matmul(u*np.array([1, 1, np.sign(np.linalg.det(np.matmul(u, v)))]), v)
-    return r
+
+opf = procrutes.np_orthogonal_polar_factor
 
 def gen_rigid_rotation(n):
     R = np.random.randn(n, 3, 3).astype(np.float32)
@@ -43,21 +41,22 @@ def get_func(method):
         print_fmt = 'matrix A:\n {}\nmatrix R: \n{}\nerror: {}'
 
     elif method == 'np_opf':
-        func = opf
+        func = procrutes.np_orthogonal_polar_factor
         stat_func = lambda a, r: (a, r,\
                 np.linalg.norm(np.matmul(r.T, r)-np.eye(3)))
         data_func = lambda x: (np.random.randn(x, 3, 3).astype(np.float32),)
         print_fmt = 'matrix A:\n {}\nmatrix R: \n{}\nerror: {}'
 
-    elif method == 'svd':
-        func = procrutes.svd3
-        stat_func = lambda a, usv: (a, *usv,\
-                np.linalg.norm(np.matmul(usv[0]*usv[1], usv[2])-a))
-        data_func = lambda x: (np.random.randn(x, 3, 3).astype(np.float32),)
-        print_fmt = 'matrix A:\n{}\nmatrix U:\n{}\nmatrix S:\n{}\nmatrix Vh:\n{}\nerror: {}'
-
     elif method == 'procrutes':
         func = procrutes.procrutes
+        data_func = gen_rigid_rotation
+        stat_func = lambda x, y, o: (x, y, o, \
+                np.linalg.norm(np.matmul(o, x) - y)/\
+                np.linalg.norm(x))
+        print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nerror: {}'
+
+    elif method == 'np_procrutes':
+        func = procrutes.np_procrutes
         data_func = gen_rigid_rotation
         stat_func = lambda x, y, o: (x, y, o, \
                 np.linalg.norm(np.matmul(o, x) - y)/\
@@ -72,6 +71,13 @@ def get_func(method):
                 np.linalg.norm(x))
         print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nmatrix S:\n{}\nerror: {}'
 
+    elif method == 'np_anitropic_procrutes':
+        func = procrutes.np_anitropic_procrutes
+        data_func = gen_streched_rotation
+        stat_func = lambda x, y, o: (x, y, *o, \
+                np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x)/\
+                np.linalg.norm(x))
+        print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nmatrix S:\n{}\nerror: {}'
 
     return data_func, func, stat_func, print_fmt
 
@@ -137,10 +143,16 @@ if  __name__ == '__main__':
     #test_method_correctness('opf')
     #test_method_correctness('svd')
     #test_method_correctness('anitropic_procrutes')
+    benchmark_method_accuracy('opf')
+    benchmark_method_speed('opf')
     benchmark_method_accuracy('procrutes')
     benchmark_method_speed('procrutes')
     benchmark_method_accuracy('anitropic_procrutes')
     benchmark_method_speed('anitropic_procrutes')
-    #benchmark_method_accuracy('opf')
-    #benchmark_method_speed('opf')
+    benchmark_method_accuracy('np_opf')
+    benchmark_method_speed('np_opf')
+    benchmark_method_accuracy('np_procrutes')
+    benchmark_method_speed('np_procrutes')
+    benchmark_method_accuracy('np_anitropic_procrutes')
+    benchmark_method_speed('np_anitropic_procrutes')
 
