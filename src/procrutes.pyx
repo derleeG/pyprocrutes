@@ -3,9 +3,9 @@ cimport numpy as np
 cimport cython
 np.import_array()
 
-from lib.pysvd3.svd3 import svd3 as svd3
-from lib.pysvd3.svd3 import qr3 as qr3
-from lib.pysvd3.svd3 import pd3 as pd3
+#from lib.pysvd3.svd3 import svd3 as svd3
+#from lib.pysvd3.svd3 import qr3 as qr3
+#from lib.pysvd3.svd3 import pd3 as pd3
 
 # it is faster to bypass the python wrapper
 cdef extern from '../lib/pysvd3/lib/svd3/svd3.h':

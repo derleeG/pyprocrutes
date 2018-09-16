@@ -1,6 +1,6 @@
 import numpy as np
 from timeit import default_timer as timer
-import procrutes
+import pyprocrutes as procrutes
 
 N = 10000
 iter_num = 30

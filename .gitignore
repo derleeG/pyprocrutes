@@ -2,3 +2,4 @@ build
 *.so
 *.swp
 *.cpp
+__pycache__
