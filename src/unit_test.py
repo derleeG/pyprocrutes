@@ -63,16 +63,16 @@ def get_func(method):
                 np.linalg.norm(x))
         print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nerror: {}'
 
-    elif method == 'anitropic_procrutes':
-        func = procrutes.anitropic_procrutes
+    elif method == 'anisotropic_procrutes':
+        func = procrutes.anisotropic_procrutes
         data_func = gen_streched_rotation
         stat_func = lambda x, y, o: (x, y, *o, \
                 np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x)/\
                 np.linalg.norm(x))
         print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nmatrix S:\n{}\nerror: {}'
 
-    elif method == 'np_anitropic_procrutes':
-        func = procrutes.np_anitropic_procrutes
+    elif method == 'np_anisotropic_procrutes':
+        func = procrutes.np_anisotropic_procrutes
         data_func = gen_streched_rotation
         stat_func = lambda x, y, o: (x, y, *o, \
                 np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x)/\
@@ -147,12 +147,12 @@ if  __name__ == '__main__':
     benchmark_method_speed('opf')
     benchmark_method_accuracy('procrutes')
     benchmark_method_speed('procrutes')
-    benchmark_method_accuracy('anitropic_procrutes')
-    benchmark_method_speed('anitropic_procrutes')
+    benchmark_method_accuracy('anisotropic_procrutes')
+    benchmark_method_speed('anisotropic_procrutes')
     benchmark_method_accuracy('np_opf')
     benchmark_method_speed('np_opf')
     benchmark_method_accuracy('np_procrutes')
     benchmark_method_speed('np_procrutes')
-    benchmark_method_accuracy('np_anitropic_procrutes')
-    benchmark_method_speed('np_anitropic_procrutes')
+    benchmark_method_accuracy('np_anisotropic_procrutes')
+    benchmark_method_speed('np_anisotropic_procrutes')
 

@@ -3,10 +3,6 @@ cimport numpy as np
 cimport cython
 np.import_array()
 
-#from lib.pysvd3.svd3 import svd3 as svd3
-#from lib.pysvd3.svd3 import qr3 as qr3
-#from lib.pysvd3.svd3 import pd3 as pd3
-
 # it is faster to bypass the python wrapper
 cdef extern from '../lib/pysvd3/lib/svd3/svd3.h':
     void svd(\
@@ -107,7 +103,7 @@ def procrutes(np.ndarray[float, ndim=2] X not None,
     return R
 
 
-def anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
+def anisotropic_procrutes(np.ndarray[float, ndim=2] X not None,
                         np.ndarray[float, ndim=2] Y not None,
                         np.ndarray[float, ndim=1] S=None,
                         int iter_num=30):
@@ -177,7 +173,7 @@ def np_procrutes(np.ndarray[float, ndim=2] X not None,
     return R
 
 
-def np_anitropic_procrutes(np.ndarray[float, ndim=2] X not None,
+def np_anisotropic_procrutes(np.ndarray[float, ndim=2] X not None,
                         np.ndarray[float, ndim=2] Y not None,
                         np.ndarray[float, ndim=1] S=None,
                         int iter_num=30):
