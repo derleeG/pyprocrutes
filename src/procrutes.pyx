@@ -156,7 +156,8 @@ def np_orthogonal_polar_factor(np.ndarray[float, ndim=2, mode='c'] A not None):
         raise ValueError("Expecting inputs of the size 3x3")
 
     U, S, V = np.linalg.svd(A)
-    R = np.matmul(U*np.array([1, 1, np.sign(np.linalg.det(np.matmul(U, V)))]), V)
+    R = np.matmul(U*np.array([1, 1, np.sign(np.linalg.det(np.matmul(U, V)))]), V)\
+            .astype(np.float32)
 
     return R
 
