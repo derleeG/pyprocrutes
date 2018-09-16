@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef MATOP.H
-#define MATOP.H
+#ifndef MATOP_H
+#define MATOP_H
 
 // scale a 3 vector
 inline void scale_vec(
@@ -34,7 +34,7 @@ inline void est_scale(
         float b1, float b2, float b3,
         float c, float &s)
 {
-    s = c==0 ? s : fabs((a1*b1 + a2*b2 + a3*b3)/c);
+    s = c==0 ? s : fabsf((a1*b1 + a2*b2 + a3*b3)/c);
 }
 
 #endif
