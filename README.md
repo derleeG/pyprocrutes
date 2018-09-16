@@ -28,3 +28,6 @@ testing method: average over 10000 randomly initialized matrices
 | orthogonal procrutes problem*| average             | 2238.998us          | 89.131us          |
 
 (*) the orthogonal procrutes problem uses iterative method to approximate the solution, iteration number is set to 30.
+
+## execution time/reconstruction error tradeoff of orthogoanl procrutes problem
+![alt text](https://github.com/derleeG/pyprocrutes/blob/master/fig/Figure.png "Tradeoff plot")
