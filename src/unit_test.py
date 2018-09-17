@@ -8,6 +8,7 @@ iter_num = 30
 opf = procrutes.np_orthogonal_polar_factor
 
 def gen_rigid_rotation(n):
+    np.random.seed(2018)
     R = np.random.randn(n, 3, 3).astype(np.float32)
     X = np.random.randn(n, 3, 10).astype(np.float32)
     Y = np.zeros((n, 3, 10), dtype=np.float32)
@@ -19,7 +20,22 @@ def gen_rigid_rotation(n):
     return X, Y
 
 
-def gen_streched_rotation(n):
+def gen_uniform_stretched_rotation(n):
+    np.random.seed(2018)
+    R = np.random.randn(n, 3, 3).astype(np.float32)
+    S = np.exp(np.random.randn(n, 1).astype(np.float32))
+    X = np.random.randn(n, 3, 10).astype(np.float32)*10
+    Y = np.zeros((n, 3, 10), dtype=np.float32)
+
+    for r, s, x, y in zip(R, S, X, Y):
+        r[...] = opf(r)
+        y[...] = np.matmul(r, x*s)
+
+    return X, Y
+
+
+def gen_nonuniform_stretched_rotation(n):
+    np.random.seed(2018)
     R = np.random.randn(n, 3, 3).astype(np.float32)
     S = np.exp(np.random.randn(n, 3, 1).astype(np.float32))
     X = np.random.randn(n, 3, 10).astype(np.float32)*10
@@ -63,9 +79,25 @@ def get_func(method):
                 np.linalg.norm(x))
         print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nerror: {}'
 
+    elif method == 'isotropic_procrutes':
+        func = procrutes.isotropic_procrutes
+        data_func = gen_uniform_stretched_rotation
+        stat_func = lambda x, y, o: (x, y, *o, \
+                np.linalg.norm(np.matmul(o[0].T, y)/o[1] - x)/\
+                np.linalg.norm(x))
+        print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nmatrix S:\n{}\nerror: {}'
+
+    elif method == 'np_isotropic_procrutes':
+        func = procrutes.np_isotropic_procrutes
+        data_func = gen_uniform_stretched_rotation
+        stat_func = lambda x, y, o: (x, y, *o, \
+                np.linalg.norm(np.matmul(o[0].T, y)/o[1] - x)/\
+                np.linalg.norm(x))
+        print_fmt = 'matrix X:\n{}\nmatrix Y:\n{}\nmatrix R:\n{}\nmatrix S:\n{}\nerror: {}'
+
     elif method == 'anisotropic_procrutes':
         func = procrutes.anisotropic_procrutes
-        data_func = gen_streched_rotation
+        data_func = gen_nonuniform_stretched_rotation
         stat_func = lambda x, y, o: (x, y, *o, \
                 np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x)/\
                 np.linalg.norm(x))
@@ -73,7 +105,7 @@ def get_func(method):
 
     elif method == 'np_anisotropic_procrutes':
         func = procrutes.np_anisotropic_procrutes
-        data_func = gen_streched_rotation
+        data_func = gen_nonuniform_stretched_rotation
         stat_func = lambda x, y, o: (x, y, *o, \
                 np.linalg.norm(np.matmul(o[0].T, y)/o[1].reshape(3,1) - x)/\
                 np.linalg.norm(x))
@@ -139,20 +171,30 @@ def benchmark_method_speed(method):
 
 
 if  __name__ == '__main__':
-
-    #test_method_correctness('opf')
-    #test_method_correctness('svd')
-    #test_method_correctness('anitropic_procrutes')
+    '''
+    test_method_correctness('opf')
+    test_method_correctness('procrutes')
+    test_method_correctness('isotropic_procrutes')
+    test_method_correctness('anisotropic_procrutes')
+    
+    test_method_correctness('np_procrutes')
+    test_method_correctness('np_isotropic_procrutes')
+    test_method_correctness('np_anisotropic_procrutes')
+    '''
     benchmark_method_accuracy('opf')
     benchmark_method_speed('opf')
     benchmark_method_accuracy('procrutes')
     benchmark_method_speed('procrutes')
+    benchmark_method_accuracy('isotropic_procrutes')
+    benchmark_method_speed('isotropic_procrutes')
     benchmark_method_accuracy('anisotropic_procrutes')
     benchmark_method_speed('anisotropic_procrutes')
     benchmark_method_accuracy('np_opf')
     benchmark_method_speed('np_opf')
     benchmark_method_accuracy('np_procrutes')
     benchmark_method_speed('np_procrutes')
+    benchmark_method_accuracy('np_isotropic_procrutes')
+    benchmark_method_speed('np_isotropic_procrutes')
     benchmark_method_accuracy('np_anisotropic_procrutes')
     benchmark_method_speed('np_anisotropic_procrutes')
 
