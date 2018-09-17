@@ -31,7 +31,7 @@ testing method: average over 10000 randomly initialized matrices
 | Isotropic procrutes problem  | average             | 80.728us            | 6.379us           |
 | Anisotropic procrutes problem*| average            | 2276.941us          | 89.834us          |
 
-(*) For orthogonal procrutes problem, solution is approximated with an iterative method. Iteration number is set to 30.
+(*) For anisotropic procrutes problem, solution is approximated with an iterative method. Iteration number is set to 30.
 
 ## execution time/reconstruction error tradeoff of orthogonal procrutes problem
 ![alt text](https://github.com/derleeG/pyprocrutes/blob/master/fig/Figure.png "Tradeoff plot")
