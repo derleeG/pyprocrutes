@@ -33,5 +33,5 @@ testing method: average over 10000 randomly initialized matrices
 
 (*) For anisotropic procrutes problem, solution is approximated with an iterative method. Iteration number is set to 30.
 
-## execution time/reconstruction error tradeoff of orthogonal procrutes problem
+## execution time/reconstruction error tradeoff of anisotropic procrutes problem
 ![alt text](https://github.com/derleeG/pyprocrutes/blob/master/fig/Figure.png "Tradeoff plot")
